@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import movieInfo from "./components/Movie.jsx";
-function App() {
-  const [data, setData] = useState(null); // Declare state for storing fetched data
+import Movie from "./components/Movie"; // Import Movie component
 
-  function renderMovie(movieInfo) {
-    return <>Movie props = {movieInfo}</>
+function App() {
+  const [data, setData] = useState(null); // State for storing fetched data
+
+  function renderMovie(movie) {
+    return <Movie key={movie.id} movieInfo={movie} />; // Pass movie object as prop
   }
 
   useEffect(() => {
@@ -29,17 +30,15 @@ function App() {
       } catch (err) {
         console.error(err);
       }
-      setData(await myResponse.json());
     };
 
     fetchData();
   }, []);
 
-  console.log(data)
-
+  // Ensure data exists before mapping
   return (
       <>
-        {data.map((movieInfo) => renderMovie())}
+        {data && data.results.map((movie) => renderMovie(movie))}
       </>
   );
 }
