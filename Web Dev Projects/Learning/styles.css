@@ -1,0 +1,33 @@
+h1 {
+    font-weight: bold;
+    color: blue;
+}
+.highlight {
+    background-color: yellow;
+}
+#footer {
+    color: gray;
+    font-size: 14px;
+}
+.box {
+    width: 300px;
+    padding: 10px;
+    border: 1px solid gray;
+    margin: 25px;
+}
+.container {
+    display: flex;
+    flex-direction: row;            /* ✅ default, but good to be explicit */
+    justify-content: space-between; /* ✅ spreads items evenly */
+    align-items: center;            /* ✅ centers items vertically */
+    flex-wrap: wrap;                /* ✅ allows wrapping to next line */
+}
+.container {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+}
+@media (max-width: 600px) {
+    color: blue;
+}
