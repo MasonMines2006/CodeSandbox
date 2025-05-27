@@ -1,30 +1,23 @@
-import ListGroup from "./components/ListGroup";
-import Alert from "./components/alert.tsx";
+import ListGroup from "./components/ListGroup/ListGroup.tsx";
+import Alert from "./components/Alert.tsx";
 import Button from "./components/Button.tsx";
+import { useState } from "react";
 
 function App() {
-  console.log("App component is rendering");
-  let items = ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"];
-
+  const items = ["New York", "San Francisco", "Tokyo", "London"];
   const handleSelectItem = (item: string) => {
     console.log("Selected item:", item);
+    // You can also set state or do anything else here
   };
   return (
-    <div>
-      <Alert>
-        Hello <span> World</span>
-      </Alert>
-
-      <Button onClick={() => console.log("Button clicked!")} color="primary">
-        Click Me
-      </Button>
+    <>
+      <h1>My First React App</h1>
       <ListGroup
         items={items}
         heading="Cities"
         onSelectItem={handleSelectItem}
-      />
-      <p>More content goes here...</p>
-    </div>
+      ></ListGroup>
+    </>
   );
 }
 export default App;
