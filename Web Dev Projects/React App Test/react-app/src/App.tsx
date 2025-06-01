@@ -1,23 +1,26 @@
-import ListGroup from "./components/ListGroup/ListGroup.tsx";
-import Alert from "./components/Alert.tsx";
-import Button from "./components/Button.tsx";
-import { useState } from "react";
+import React, { useState } from "react";
+import ExpandableText from "./components/ExpandableText";
+import bootstrap from "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
-  const items = ["New York", "San Francisco", "Tokyo", "London"];
-  const handleSelectItem = (item: string) => {
-    console.log("Selected item:", item);
-    // You can also set state or do anything else here
+  const [isExpanded, setIsExpanded] = useState(false);
+  const handleClick = () => {
+    setIsExpanded(!isExpanded);
   };
   return (
-    <>
-      <h1>My First React App</h1>
-      <ListGroup
-        items={items}
-        heading="Cities"
-        onSelectItem={handleSelectItem}
-      ></ListGroup>
-    </>
+    <ExpandableText
+      onClick={handleClick}
+      maxLength={100}
+      isExpanded={isExpanded}
+    >
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+      commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+      velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+      cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+      est laborum.
+    </ExpandableText>
   );
 }
 export default App;
