@@ -1,32 +1,40 @@
 import { useState } from "react";
 import type { FormEvent, ChangeEvent } from "react";
+import { useForm, type FieldValues } from "react-hook-form";
+import { z } from "zod";
+const schema = z.object({
+  name: z.string().min(3, "Name must be at least 3 characters long"),
+  age: z.number().int().min(18).positive("Age must be a positive integer"),
+});
+
+interface FormData {
+  name: string;
+  age: number;
+}
 
 const FormAlt = () => {
-  const [person, setPerson] = useState({ name: "", age: 0 });
-  const handleSubmit = (event: FormEvent) => {
-    event.preventDefault();
-    console.log("Submitted:", person);
-  };
-  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setPerson({ ...person, name: event.target.value });
-  };
-  const handleAgeChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setPerson({ ...person, age: parseInt(event.target.value) });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>();
+  const onSubmit = (data: FieldValues) => {
+    console.log("Submitted:", data);
+    console.log(errors);
   };
   return (
     <>
       <h1>Page Header</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-3">
           <label htmlFor="name" className="form-label">
             Name
           </label>
           <input
-            onChange={handleNameChange}
+            {...(register("name"), { required: true, minLength: 3 })}
             id="name"
             type="text"
             className="form-control"
-            value={person.name}
           />
         </div>
         <div className="mb-3">
@@ -34,16 +42,21 @@ const FormAlt = () => {
             Age
           </label>
           <input
-            onChange={handleAgeChange}
+            {...register("age")}
             id="age"
-            type="text"
+            type="number"
             className="form-control"
-            value={person.age}
           />
+          <button type="submit" className="btn btn-primary">
+            Submit
+          </button>
         </div>
       </form>
-      <p> {person.age}</p>
-      <p> {person.name}</p>
+      <p> {register("age").name}</p>
+      <p> {register("name").name}</p>
+      {errors.name?.type == "required" && (
+        <p className="text-danger">Please submit somethign required</p>
+      )}
     </>
   );
 };
