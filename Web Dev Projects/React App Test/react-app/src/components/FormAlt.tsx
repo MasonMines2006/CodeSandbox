@@ -2,22 +2,25 @@ import { useState } from "react";
 import type { FormEvent, ChangeEvent } from "react";
 import { useForm, type FieldValues } from "react-hook-form";
 import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 const schema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters long"),
-  age: z.number().int().min(18).positive("Age must be a positive integer"),
+  age: z
+    .number({ invalid_type_error: "Age field is reqiured" })
+    .int()
+    .min(18)
+    .positive("Age must be a positive integer"),
 });
 
-interface FormData {
-  name: string;
-  age: number;
-}
+type FormData = z.infer<typeof schema>;
 
 const FormAlt = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
-  } = useForm<FormData>();
+    formState: { errors, isValid },
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
   const onSubmit = (data: FieldValues) => {
     console.log("Submitted:", data);
     console.log(errors);
@@ -31,32 +34,29 @@ const FormAlt = () => {
             Name
           </label>
           <input
-            {...(register("name"), { required: true, minLength: 3 })}
+            {...register("name")}
             id="name"
             type="text"
             className="form-control"
           />
         </div>
+        <p className="text-danger">{errors.name && errors.name.message}</p>
         <div className="mb-3">
           <label htmlFor="age" className="form-label">
             Age
           </label>
           <input
-            {...register("age")}
+            {...register("age", { valueAsNumber: true })}
             id="age"
             type="number"
             className="form-control"
           />
-          <button type="submit" className="btn btn-primary">
+          <p className="text-danger">{errors.age && errors.age.message}</p>
+          <button disabled={!isValid} type="submit" className="btn btn-primary">
             Submit
           </button>
         </div>
       </form>
-      <p> {register("age").name}</p>
-      <p> {register("name").name}</p>
-      {errors.name?.type == "required" && (
-        <p className="text-danger">Please submit somethign required</p>
-      )}
     </>
   );
 };
