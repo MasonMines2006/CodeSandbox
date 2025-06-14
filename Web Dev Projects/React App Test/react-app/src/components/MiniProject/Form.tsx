@@ -3,36 +3,52 @@ import { z } from "zod";
 import { useForm, type FieldValues } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-const categories = ["Groceries", "Utilities", "Entertainment"];
-const categoryOptions = categories.map((categories) => {
-  <li key={categories}>{categories}</li>;
+const categories = ["Groceries", "Utilities", "Entertainment"] as [
+  string,
+  ...string[]
+];
+
+const categoryOptions = categories.map((category) => {
+  return (
+    <div>
+      <a className="dropdown-item" key={category} href="#">
+        Action
+      </a>
+    </div>
+  );
 });
 
+interface Props {
+  data?: FieldValues;
+  onSubmit: (data: FieldValues) => void;
+}
+
 const schema = z.object({
-  description: z.string(),
+  description: z.string().min(1, "Input a name"),
   amount: z
-    .number({ invalid_type_error: "Age field is reqiured" })
-    .int()
-    .positive("Age must be a positive integer"),
-  category: z.string().refine((value) => categories.includes(value), {
-    message: "Category must be one of the predefined categories",
+    .number({ invalid_type_error: "Amount is reqiured" })
+    .positive("Amount must be a positive integer"),
+  category: z.enum(categories, {
+    errorMap: () => ({ message: "Category field is required" }),
   }),
 });
 
 type FormData = z.infer<typeof schema>;
 
-const Form = () => {
+const Form = ({ onSubmit, data }: Props) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
-  const onSubmit = (data: FieldValues) => {
-    console.log("Submitted:", data);
-    console.log(errors);
+
+  const internalSubmit = (formData: FormData) => {
+    console.log("Submitted locally:", formData);
+    onSubmit(formData);
   };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(internalSubmit)}>
       <div className="mb-3">
         {/* Description */}
         <label htmlFor="description" className="form-label">
@@ -54,7 +70,7 @@ const Form = () => {
           Amount
         </label>
         <input
-          {...register("amount")}
+          {...register("amount", { valueAsNumber: true })}
           id="amount"
           type="number"
           className="form-control"
@@ -69,13 +85,22 @@ const Form = () => {
           Category
         </label>
 
-        <input
+        <select
           {...register("category")}
           id="category"
-          type="radio"
           className="form-control"
-          value="Groceries"
-        />
+          defaultValue=""
+        >
+          <option value="" disabled>
+            Select a category
+          </option>
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+
         <p className="text-danger">
           {errors.category ? errors.category.message : "No errors"}
         </p>
